@@ -1,3 +1,6 @@
 [submodule "simple-solc-project/lib\\forge-std"]
 	path = simple-solc-project/lib\\forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "simple-solc-project/lib\\openzeppelin-contracts"]
+	path = simple-solc-project/lib\\openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
