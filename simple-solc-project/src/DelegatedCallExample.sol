@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "lib\openzeppelin-contracts\contracts\proxy"; //@openzeppelin-contracts/contracts/proxy/Proxy.sol
+import {Proxy} from "../lib/openzeppelin-contracts/contracts/proxy/Proxy.sol"; //@openzeppelin-contracts/contracts/proxy/Proxy.sol;
 
 contract SmallProxy is Proxy {
     //this is the keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1
@@ -15,9 +15,9 @@ contract SmallProxy is Proxy {
     }
 
     function _implementation()
+        internal
         view
         override
-        imternal
         returns (address implementationAddress)
     {
         assembly {
