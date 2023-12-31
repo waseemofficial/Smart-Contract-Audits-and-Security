@@ -45,12 +45,14 @@
 ![GitHub](https://img.shields.io/badge/-Regex-000?&logo=Regex)
 ![GithubActions](https://img.shields.io/badge/-GithubActions-000?&logo=GithubActions)
 </div>
-<div align="left">
+<div align="center">
  
-# Title
+# Smart Contract Audits, Security, and DeFi
 
-==Array==
-</div>
-==Array==
+</div> 
 
-
+## Foundry Basics
+ 
+### Installing Foundry on Windows
+- follow steps:
+https://www.linkedin.com/pulse/how-install-foundry-windows-pablo-rego 
