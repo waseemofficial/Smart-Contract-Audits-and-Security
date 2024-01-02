@@ -16,8 +16,15 @@ contract Raffle is VRFConsumerBaseV2 {
     error Raffle__NotEnoughEthSent();
     error Raffle__TransferFailed();
     error Raffle__RaffleNotOpen();
+    error Raffle__UpkeepNotNeeded(
+        uint256 currentBalance,
+        uint256 numPlayers,
+        uint256 raffleState
+    );
 
-    /** type declarations Enum*/
+    /**
+     * type declarations Enum
+     */
     enum RaffleState {
         OPEN,
         CALCULATING
@@ -37,6 +44,7 @@ contract Raffle is VRFConsumerBaseV2 {
     address private s_recentWinner;
     RaffleState private s_raffleState;
     //! Events
+
     event EnteredRaffle(address indexed player);
     event PickedWinner(address indexed winner);
 
@@ -77,9 +85,9 @@ contract Raffle is VRFConsumerBaseV2 {
 
     //chainlink VRF Automation upkeep
     /**
-     *@dev This is the function that the Chainlink Automation node will call to see if its time to perform an upkeep.
-     *@param null
-     *@return upkeepNeeded - true if the contract needs to request new randomness, false if it has enough
+     * @dev This is the function that the Chainlink Automation node will call to see if its time to perform an upkeep.
+     * @param //null
+     * @return upkeepNeeded - true if the contract needs to request new randomness, false if it has enough
      */
     function checkUpkeep(
         bytes memory /*checkData*/
@@ -92,9 +100,17 @@ contract Raffle is VRFConsumerBaseV2 {
         return (upkeepNeeded, "0x0");
     }
 
-    function pickWinner() external {
+    function performUpkeep(bytes calldata /* performData*/) external {
+        (bool upkeepNeeded, ) = checkUpkeep("");
+        if (!upkeepNeeded) {
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                s_players.length,
+                uint256(s_raffleState)
+            );
+        }
         s_raffleState = RaffleState.CALCULATING;
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(
+        i_vrfCoordinator.requestRandomWords(
             i_gasLane,
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
@@ -110,8 +126,8 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     function fulfillRandomWords(
-        uint256 requestId,
-        uint256[] memory randomWords
+        uint256,
+        /*requestId*/ uint256[] memory randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable winner = s_players[indexOfWinner];
@@ -127,5 +143,9 @@ contract Raffle is VRFConsumerBaseV2 {
             revert Raffle__TransferFailed();
         }
         emit PickedWinner(winner);
+    }
+
+    function getRaffleState() external view returns (RaffleState) {
+        return s_raffleState;
     }
 }
