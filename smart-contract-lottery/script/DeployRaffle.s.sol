@@ -15,7 +15,8 @@ contract DeployRaffle is Script {
             address vrfCoordinator,
             bytes32 gasLane,
             uint64 subscriptionId,
-            uint32 callbackGasLimit
+            uint32 callbackGasLimit,
+            address link
         ) = helperConfig.activeNetworkConfig();
         if (subscriptionId == 0) {
             //we are going to need to create a subscription!
@@ -32,7 +33,7 @@ contract DeployRaffle is Script {
             );
         }
         vm.startBroadcast();
-        Raffle raffel = new Raffle(
+        Raffle raffle = new Raffle(
             enteranceFee,
             interval,
             vrfCoordinator,
@@ -48,6 +49,6 @@ contract DeployRaffle is Script {
             vrfCoordinator,
             subscriptionId
         );
-        return (raffel, helperConfig);
+        return (raffle, helperConfig);
     }
 }

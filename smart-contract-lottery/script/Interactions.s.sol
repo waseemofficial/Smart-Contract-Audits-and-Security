@@ -5,20 +5,23 @@ import {Script, console} from "forge-std/script.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 import {LinkToken} from "../test/mocks/LinkToken.sol";
-import {DevOpsTools} from "lib/foundry-devops/src/DevOpsTools.sol";
+import {DevOpsTools} from "../lib/foundry-devops/src/DevOpsTools.sol"; //smart-contract-lottery\lib\foundry-devops
 
 contract CreateSubscription is Script {
     function createSubscriptionUsingConfig() public returns (uint64) {
         HelperConfig helperConfig = new HelperConfig();
         (, , address vrfCoordinator, , , , ) = helperConfig
             .activeNetworkConfig();
-        return creteSubscription(vrfCoordinator);
+        return createSubscription(vrfCoordinator);
     }
 
-    function creteSubscription(address vrfCoordinator) public returns (uint64) {
+    function createSubscription(
+        address vrfCoordinator
+    ) public returns (uint64) {
         console.log("Creating subscription... On chainId: ", block.chainid);
         vm.startBroadcast();
-        uint64 subId = VRFCoordinatorV2Mock(vrfCoordinator).creteSubscription();
+        uint64 subId = VRFCoordinatorV2Mock(vrfCoordinator)
+            .createSubscription();
         vm.stopBroadcast();
         console.log("Your subscription id is: ", subId);
         return subId;
@@ -60,7 +63,7 @@ contract FundSubscription is Script {
             vm.startBroadcast();
             VRFCoordinatorV2Mock(vrfCoordinator).fundSubscription(
                 subId,
-                Fund_AMOUNT
+                FUND_AMOUNT
             );
             vm.stopBroadcast();
         } else {
@@ -102,7 +105,7 @@ contract AddConsumer is Script {
     }
 
     function run() external {
-        address raffle = DevOpsTools.get_most_recent_deployments(
+        address raffle = DevOpsTools.get_most_recent_deployment(
             "Rafflee",
             block.chainid
         );
