@@ -16,3 +16,9 @@
 [submodule "smart-contract-lottery/lib\\forge-std"]
 	path = smart-contract-lottery/lib\\forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "smart-contract-lottery/lib\\solmate"]
+	path = smart-contract-lottery/lib\\solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "smart-contract-lottery/lib\\foundry-devops"]
+	path = smart-contract-lottery/lib\\foundry-devops
+	url = https://github.com/ChainAccelOrg/foundry-devops

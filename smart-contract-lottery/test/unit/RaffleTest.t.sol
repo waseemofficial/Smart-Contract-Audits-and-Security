@@ -9,6 +9,10 @@ import {HelperConfig} from "../../script/HelperConfig.s.sol";
 //import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 
 contract RaffleTest is Test {
+    /*Events */
+    event EnteredRaffle(address indexed player); // @dev: Event emitted when a player enter the raffle
+
+    /*inetilisation globale variables */
     Raffle raffle;
     HelperConfig helperConfig;
 
@@ -19,7 +23,7 @@ contract RaffleTest is Test {
     bytes32 gasLane;
     uint64 subscriptionId;
     uint32 callbackGasLimit;
-
+    address link;
     address public PLAYER = makeAddr("player"); //@dev: Standerd cheats from Forge
     uint256 public constant STARTING_USER_BALANCE = 10 ether;
 
@@ -32,14 +36,51 @@ contract RaffleTest is Test {
             vrfCoordinator,
             gasLane,
             subscriptionId,
-            callbackGasLimit
+            callbackGasLimit,
+            link
         ) = helperConfig.activeNetworkConfig();
+        vm.deal(PLAYER, STARTING_USER_BALANCE); //@dev: Give player some ether to play with
     }
 
     function testRaffleInitializesInOpenState() public view {
         assert(raffle.getRaffleState() == Raffle.RaffleState.OPEN); //RaffleState.Open
     }
+
+    function testRaffleRevertsWhenYouDontPayEnough() public {
+        //Arrange
+        vm.prank(PLAYER);
+
+        //Act  //Assert
+        vm.expectRevert(Raffle.Raffle__NotEnoughEthSent.selector);
+        raffle.enterRaffle();
+    }
+
+    function testRaffleRecordsPlayersWhenTheyEnter() public {
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: enteranceFee}();
+        address playerRecorded = raffle.getPlayer(0);
+        assert(playerRecorded == PLAYER);
+    }
+
+    function testEmitsEventOnEnterance() public {
+        vm.prank(PLAYER);
+        vm.expectEmit(true, false, false, false, address(raffle));
+        emit EnteredRaffle(PLAYER);
+        raffle.enterRaffle{value: enteranceFee}();
+    }
+
+    function testCantEnterWhenRaffleIsCalculating() public {
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: enteranceFee}();
+        vm.warp(block.timestamp + interval + 1); //@dev: Advance time to enterance
+        vm.roll(block.number + 1); //@dev: Advance block by one
+        raffle.performUpkeep("");
+        vm.expectRevert(Raffle.Raffle__RaffleNotOpen.selector);
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: enteranceFee}();
+    }
 }
+
 // import "forge-std/Test.sol";
 // import {Raffle} from "../src/Raffle.sol";
 // import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
