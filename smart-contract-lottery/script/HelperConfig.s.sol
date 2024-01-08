@@ -5,6 +5,7 @@ import {Script} from "forge-std/Script.sol";
 import {VRFCoordinatorV2Mock} from "@chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol";
 import {LinkToken} from "../test/mocks/LinkToken.sol";
 
+//import {}from "";
 contract HelperConfig is Script {
     struct NetworkConfig {
         uint256 enteranceFee;
@@ -14,8 +15,10 @@ contract HelperConfig is Script {
         uint64 subscriptionId;
         uint32 callbackGasLimit;
         address link;
+        uint256 deployerKey;
     }
-
+    uint256 public constant DEFAULT_ANVIL_KEY =
+        0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
     NetworkConfig public activeNetworkConfig;
 
     constructor() {
@@ -27,7 +30,7 @@ contract HelperConfig is Script {
     }
 
     //@dev: get the config for the sepolia eth network
-    function getSepoliaEthConfig() public pure returns (NetworkConfig memory) {
+    function getSepoliaEthConfig() public view returns (NetworkConfig memory) {
         return
             NetworkConfig({
                 enteranceFee: 0.01 ether,
@@ -36,7 +39,8 @@ contract HelperConfig is Script {
                 gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c, //@note: from vrf-coordinator supported networks //!keyHash
                 subscriptionId: 3950, //@note: update this value with the subId! :3950:
                 callbackGasLimit: 500_000,
-                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789
+                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789,
+                deployerKey: vm.envUint("PRIVATE_KEY")
             });
     }
 
@@ -61,7 +65,8 @@ contract HelperConfig is Script {
                 gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c, //@note: from vrf-coordinator supported networks //!keyHash
                 subscriptionId: 0, //@note: our script will add this
                 callbackGasLimit: 500_000,
-                link: address(link)
+                link: address(link),
+                deployerKey: DEFAULT_ANVIL_KEY
             });
     }
 }

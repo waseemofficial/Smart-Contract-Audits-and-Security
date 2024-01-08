@@ -56,3 +56,24 @@
 ### Installing Foundry on Windows
 - follow steps:
 https://www.linkedin.com/pulse/how-install-foundry-windows-pablo-rego 
+
+## Scripts 
+helping to accomplish tasks 
+- Deploying Raffle 
+- Helpe in configration setup
+- interacting with the contracts abi
+
+## Src
+all contract/aplication related files
+- Raffle
+
+## Test
+
+### integration
+
+-
+### mock
+mocking the functionality of 
+-
+### unit
+- unit tests for the Raffle contract
