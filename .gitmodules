@@ -22,3 +22,6 @@
 [submodule "smart-contract-lottery/lib\\foundry-devops"]
 	path = smart-contract-lottery/lib\\foundry-devops
 	url = https://github.com/ChainAccelOrg/foundry-devops
+[submodule "foundry-NFT/lib\\openzeppelin-contracts"]
+	path = foundry-NFT/lib\\openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
